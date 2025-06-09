@@ -14,6 +14,7 @@ def test_create_edit_delete_todo(driver, app_context):
     login = LoginPage(driver)
     login.open()
     login.login("test", "P@ssw0rd_X9g2#")
+    login.is_success()
     driver.save_screenshot("screenshots/step1_login_success.png")
 
 
