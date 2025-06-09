@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ '編輯' if todo and not readonly else '查看' if todo else '新增' }}提醒事項</title>
+  <link rel="stylesheet" href="/static/todo.css">
+</head>
+<body>
+  <div class="form-box">
+    <div class="user-info">
+      👤 {{ session['username'] }}
+      <a href="{{ url_for('logout') }}" class="btn-logout">登出</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="message-error">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="tabs">
+      <div class="tab active" data-tab="basic">基本資料</div>
+      <div class="tab" data-tab="advanced">時程與提醒</div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="active_tab" id="active_tab" value="basic">
+
+      <div id="basic" class="tab-content active">
+        <label for="title">標題 <span style="color: red;">*</span></label>
+        <input type="text" id="title" name="title" required
+          {% if readonly %}readonly{% endif %}
+          oninvalid="this.setCustomValidity('請輸入標題')"
+          oninput="this.setCustomValidity('')"
+          value="{{ todo.title if todo else '' }}">
+
+        <label for="description">說明 <span style="color: red;">*</span></label>
+        <textarea id="description" name="description" required
+          {% if readonly %}readonly{% endif %}
+          oninvalid="this.setCustomValidity('請輸入說明')"
+          oninput="this.setCustomValidity('')">{{ todo.description if todo else '' }}</textarea>
+
+        <label for="priority">優先順序 <span style="color: red;">*</span></label>
+        <select id="priority" name="priority" required
+          {% if readonly %}disabled{% endif %}
+          oninvalid="this.setCustomValidity('請選擇優先順序')"
+          oninput="this.setCustomValidity('')">
+          {% for p in ['高','中','低'] %}
+            <option value="{{p}}" {% if todo and todo.priority == p %}selected{% endif %}>{{p}}</option>
+          {% endfor %}
+        </select>
+
+        <label for="note">備註</label>
+        <textarea id="note" name="note" {% if readonly %}readonly{% endif %}>{{ todo.note if todo else '' }}</textarea>
+
+        {% if not readonly %}
+        <div class="file-upload-group">
+          <label>上傳附件</label>
+          <input type="file" id="attachment" name="attachment" style="display:none;">
+          <button type="button" id="upload-trigger" class="btn-green">＋新增</button>
+          <span id="file-name" class="file-info"></span>
+        </div>
+        {% endif %}
+
+        {% if todo and todo.attachment_filename %}
+          <p class="file-info">目前附件：
+            <a href="{{ url_for('static', filename='uploads/' ~ todo.attachment_filename) }}" target="_blank">{{ todo.attachment_filename }}</a>
+          </p>
+        {% endif %}
+      </div>
+
+      <div id="advanced" class="tab-content">
+        <label for="start_date">開始日期 <span style="color: red;">*</span></label>
+        <input type="date" id="start_date" name="start_date" required
+          {% if readonly %}readonly{% endif %}
+          value="{{ todo.start_date }}">
+
+        <label for="end_date">結束日期 <span style="color: red;">*</span></label>
+        <input type="date" id="end_date" name="end_date" required
+          {% if readonly %}readonly{% endif %}
+          value="{{ todo.end_date }}">
+
+        <label for="repeat">重複設定 <span style="color: red;">*</span></label>
+        <select id="repeat" name="repeat" required
+          {% if readonly %}disabled{% endif %}
+          oninvalid="this.setCustomValidity('請選擇重複頻率')"
+          oninput="this.setCustomValidity('')">
+          {% for r in ['永不','每小時','每天','平日','周末','每周','每兩周','每月','每三個月','每六個月','每年'] %}
+            <option value="{{r}}" {% if todo and todo.repeat == r %}selected{% endif %}>{{r}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if not readonly %}
+      <div class="form-button-group button-bottom-space">
+        <button type="submit" class="btn-green">儲存</button>
+        <button type="button" class="btn-gray" onclick="window.location.href='/todo/list'">取消</button>
+      </div>
+      {% else %}
+      <div class="form-button-group button-bottom-space">
+        <button type="button" class="btn-gray" onclick="window.location.href='/todo/list'">返回列表</button>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+        document.getElementById('active_tab').value = tab.dataset.tab;
+      });
+    });
+
+    window.addEventListener("DOMContentLoaded", function() {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab");
+      if (tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        const selectedTab = document.querySelector(`[data-tab='${tab}']`);
+        const selectedContent = document.getElementById(tab);
+        if (selectedTab && selectedContent) {
+          selectedTab.classList.add('active');
+          selectedContent.classList.add('active');
+          document.getElementById('active_tab').value = tab;
+        }
+      }
+    });
+
+    {% if not readonly %}
+    document.getElementById("upload-trigger").addEventListener("click", function() {
+      document.getElementById("attachment").click();
+    });
+    document.getElementById("attachment").addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const allowed = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!allowed.includes(ext)) {
+          alert('不支援的檔案格式，請上傳 pdf/doc/jpg/png。');
+          this.value = '';
+          document.getElementById("file-name").textContent = '';
+        } else {
+          document.getElementById("file-name").textContent = file.name;
+        }
+      }
+    });
+    {% endif %}
+  </script>
+</body>
+</html>

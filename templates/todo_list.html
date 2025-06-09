@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>提醒清單</title>
+  <link rel="stylesheet" href="/static/todo.css">
+</head>
+<body>
+  <div class="form-box">
+    <div class="user-info">
+      👤 {{ session['username'] }}
+      <a href="{{ url_for('logout') }}" class="btn-logout">登出</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="message-success" id="message">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="todo-header">
+      <h2 class="todo-title">📋 提醒清單</h2>
+      <button type="button" class="btn-green" onclick="location.href='/todo/create'">
+          📝 ＋新增
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('todo_batch_delete') }}" onsubmit="return validateBatchDelete();">
+      <button type="submit" class="btn-green btn-batch-delete mt-10 mb-10">🗑 批次刪除</button>
+      <table id="todo-list" border="1" cellspacing="0" cellpadding="8">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>狀態切換</th>
+            <th>標題</th>
+            <th>狀態</th>
+            <th>優先順序</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for todo in todos %}
+            <tr>
+              <!-- 多選刪除 checkbox -->
+              <td>
+                <input type="checkbox" name="selected_ids" value="{{ todo.id }}" class="select-item">
+              </td>
+
+              <!-- 任務狀態切換按鈕 -->
+              <td>
+                <button type="button" class="btn-status-toggle" data-id="{{ todo.id }}">
+                  {% if todo.is_done %}<span class="circle-check">✔</span>{% else %}⭕{% endif %}
+                </button>
+              </td>
+
+              <!-- 標題 -->
+              <td>
+                <strong {% if todo.is_done %}class="todo-done"{% endif %}>{{ todo.title }}</strong>
+              </td>
+
+              <!-- 狀態 -->
+              <td>{{ "已完成" if todo.is_done else "未完成" }}</td>
+
+              <!-- 優先順序 -->
+              <td>{{ todo.priority }}</td>
+
+              <!-- 操作 -->
+              <td>
+                <a href="{{ url_for('todo_view', id=todo.id) }}">👁️ 查看</a>
+                <a href="{{ url_for('todo_edit', id=todo.id) }}">✏️ 編輯</a>
+                <a href="{{ url_for('todo_delete', id=todo.id) }}" onclick="return confirm('確定要刪除嗎？')">🗑 刪除</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </form>
+  </div>
+  <script>
+    const selectAll = document.getElementById("select-all");
+    const checkboxes = document.querySelectorAll(".select-item");
+
+    selectAll.addEventListener("change", function () {
+      checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener("change", function () {
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        selectAll.checked = allChecked;
+      });
+    });
+    // 批次刪除驗證：至少選一項
+    function validateBatchDelete() {
+      const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+      if (!anyChecked) {
+        alert("請先勾選要刪除的任務！");
+        return false;
+      }
+      return confirm("確定要刪除選取的任務？");
+    }
+    document.querySelectorAll(".btn-status-toggle").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        fetch(`/todo/toggle_done/${id}`, {
+          method: "POST",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        })
+        .then(res => {
+          if (res.ok) window.location.reload();
+          else alert("狀態切換失敗");
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 320px;
+}
+
+.form-box h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.form-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-box button:hover {
+  background-color: #45a049;
+}
+
+.form-box .link-button {
+  background: #2196F3;
+  margin-top: 10px;
+}
+
+p.error {
+  color: red;
+  text-align: center;
+  margin: 0.5rem 0 0;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 1rem auto;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.title-with-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.title-with-logo .logo {
+  width: 28px;
+  height: 28px;
+  margin: 0 6px 0 0;
+  position: relative;
+  top: 1px;  /* 圖檔略上移，對齊文字 */
+}
+
+.title-with-logo h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}

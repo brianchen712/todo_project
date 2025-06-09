@@ -1,0 +1,3 @@
+[DEBUG] current_url (before click): http://127.0.0.1:5000/todo/list?user_id=1
+[DEBUG] current_url (after click): http://127.0.0.1:5000/todo/create
+[DEBUG] Alert text: 確定要刪除嗎？

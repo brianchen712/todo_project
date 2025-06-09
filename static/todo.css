@@ -1,0 +1,139 @@
+ul li {
+  margin: 12px 0;
+  line-height: 1.6;
+}
+ul li a {
+  margin-left: 10px;
+}
+label { display: block; margin: 12px 0 6px; font-weight: bold; }
+input, textarea, select {
+  width: 99%; padding: 8px; margin-bottom: 10px;
+  border-radius: 5px; border: 1px solid #ccc;
+}
+.tabs { display: flex; margin-bottom: 1rem; }
+.tab { flex: 1; padding: 10px; background: #ddd; text-align: center; cursor: pointer; border-radius: 6px 6px 0 0; }
+.tab.active { background: #fff; font-weight: bold; border-bottom: none; }
+.tab-content { display: none; padding: 10px 0; }
+.tab-content.active { display: block; }
+.file-info { font-size: 14px; margin-top: 2px; margin-bottom: 10px; }
+.todo-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.todo-title {
+  margin: 0;
+}
+.link-clean {
+  text-decoration: none;
+}
+.btn-green {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.message-success {
+  color: green;
+  font-weight: bold;
+}
+.message-error {
+  color: red;
+  font-weight: bold;
+}
+.form-button-group {
+  justify-content: space-between;
+  gap: 12px;
+}
+.tab.active {
+  background-color: #e0f2e9;
+  color: #4CAF50;
+}
+
+.tab.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+
+.btn-gray {
+  padding: 8px 16px;
+  background-color: #888;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.file-upload-group {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.button-bottom-space {
+  margin-top: 20px;
+}
+
+.user-info {
+  text-align: right;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.btn-logout {
+  background-color: #888;
+  color: white;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.todo-done {
+  text-decoration: line-through;
+  color: gray;
+  opacity: 0.7;
+}
+.btn-status-toggle {
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.circle-check {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background-color: #4CAF50; /* 綠色底 */
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 22px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+.mb-10 {
+  margin-bottom: 3px;
+}
+
+input[readonly],
+textarea[readonly],
+select[disabled] {
+  background-color: #f5f5f5;
+  color: #555;
+  cursor: not-allowed;
+  border-color: #ccc;
+}

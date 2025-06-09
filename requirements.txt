@@ -1,0 +1,12 @@
+flask
+flask_sqlalchemy
+sqlalchemy
+pyodbc
+selenium
+pytest
+requests
+pyyaml
+pytest-html
+PyJWT
+allure-pytest
+pytest-order
