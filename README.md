@@ -35,6 +35,8 @@
 ├── pages/                # Selenium Page Object 模組
 ├── tests/                # 測試腳本（UI + API）
 │   └── files/            # 附件測試用檔案
+├── screenshots/          # 測試失敗截圖或特定案例截圖
+├── allure-results/       # 存放Allure 報告原始資料
 
 └── .github/workflows/    # GitHub Actions CI 設定檔
 ```
@@ -90,52 +92,52 @@ pytest -m api
 
 ## 🧪 測試截圖
 Step1：成功登入後的提醒清單頁：驗證登入成功會自動導向 /todo/list，並顯示個人提醒清單。
-![step1_login_success](https://github.com/user-attachments/assets/8581bece-ebe3-4016-a40f-6f2a6cac9b87)
+![step1_login_success](https://github.com/user-attachments/assets/7579402c-13e5-4fa9-a0d3-cc99b3b68457)
 
 Step2：登入失敗時顯示錯誤訊息：輸入錯誤帳號密碼，畫面顯示「帳號或密碼錯誤」提示訊息。
-![step2_login_fail](https://github.com/user-attachments/assets/0d4c7f52-6d91-4fe2-9527-9926b41ef6ff)
+![step2_login_fail](https://github.com/user-attachments/assets/bfab57ed-6a4a-4b16-93a9-8f7861927d87)
 
 Step3：註冊成功後跳轉登入頁：使用新帳號註冊後，自動跳轉登入頁面，驗證流程正常。
-![step3_register_success](https://github.com/user-attachments/assets/489ad155-9441-4072-b42b-48bb8da34b46)
+![step3_register_success](https://github.com/user-attachments/assets/3e590f89-aa12-482e-ad95-31ceeeb9463f)
 
 Step4：重複帳號顯示錯誤：當輸入已存在的帳號時，提示「帳號已存在」錯誤訊息。
-![step4_register_duplicate](https://github.com/user-attachments/assets/01aa8f0c-8bba-43e8-bf4b-5dcd22a1ab87)
+![step4_register_duplicate](https://github.com/user-attachments/assets/049ad74e-597c-4d38-9016-6773caafbad8)
 
 Step5：填寫新增任務表單：點選清單畫面的「+新增」後，填寫提醒事項表單畫面。
-![step5_create_form](https://github.com/user-attachments/assets/f2a0b926-bee0-45d7-a2fa-2c2ae819104e)
+![step5_create_form](https://github.com/user-attachments/assets/983d905c-635e-4e78-a1d2-b69ab57afadc)
 
 Step6：新增後回到清單畫面：新增完成後跳轉清單，驗證任務正確新增並顯示在列表。
-![step6_todo_list_after_create](https://github.com/user-attachments/assets/6a15fe08-28c3-4cc4-a0e3-91fec1b3caba)
+![step6_todo_list_after_create](https://github.com/user-attachments/assets/1419e98f-e356-47f1-ad9f-f497768965e1)
 
 Step6：任務編輯完成訊息：編輯任務內容後送出，顯示成功訊息提示已更新。
-![step6_edit_done](https://github.com/user-attachments/assets/649f1632-6a5a-4b25-ab43-3e20470a9ddb)
+![step6_edit_done](https://github.com/user-attachments/assets/6a2c4b35-4370-4bb5-a64a-e1f258181d5b)
 
 Step6：任務刪除後的畫面：點選刪除後清單自動更新，驗證任務成功移除。
-![step6_after_delete](https://github.com/user-attachments/assets/466d9319-df68-48af-a5d7-c5715e6ce5ec)
+![step6_after_delete](https://github.com/user-attachments/assets/4afac2eb-8aae-46f4-86ce-1d3943ae9675)
 
 Step7：點擊新增並選擇檔案：顯示點選「+新增」並上傳檔案附件的畫面。
-![step7_upload_file](https://github.com/user-attachments/assets/f8afd77f-46a7-4a11-b810-aaeb6c6718ce)
+![step7_upload_file](https://github.com/user-attachments/assets/ea5f5754-5770-46f1-85b9-680220a9f752)
 
 Step7：表單送出成功畫面：附件上傳後成功建立任務，跳轉回清單畫面。
-![step7_uploaded_done](https://github.com/user-attachments/assets/d901430c-e410-4559-8a95-797227af645b)
+![step7_uploaded_done](https://github.com/user-attachments/assets/a434771b-c936-4818-8f54-3225c5db5e12)
 
 Step7：顯示附件檔案名稱：點選查看任務內容，頁面成功顯示已上傳的檔案名稱連結。
-![step7_verify_attachment_name](https://github.com/user-attachments/assets/f426c371-7283-4f12-a06e-3aab495b07c9)
+![step7_verify_attachment_name](https://github.com/user-attachments/assets/64646b78-40f6-4770-94df-639acc5d3a98)
 
 Step8：狀態切換前為「未完成」：任務建立後預設為未完成狀態，顯示對應標籤。
-![step8_status_before](https://github.com/user-attachments/assets/9637c943-7941-4d10-9522-59620906e304)
+![step8_status_before](https://github.com/user-attachments/assets/f58500ea-da5c-403f-9caa-5ccdc0a6db1d)
 
 Step8：狀態切換為「已完成」：點擊切換按鈕後，任務狀態即時變為已完成。
-![step8_toggle_done](https://github.com/user-attachments/assets/0dca9b2b-0349-4f72-8e3f-591b529b7c54)
+![step8_toggle_done](https://github.com/user-attachments/assets/9ac6ab15-a35c-48e7-be40-c5bc61608fbe)
 
 Step8：再次切換為「未完成」：再次點擊切換按鈕，狀態恢復為未完成。
-![step8_toggle_undo](https://github.com/user-attachments/assets/0cf4b5b2-577d-4744-a442-40b30d3214e6)
+![step8_toggle_undo](https://github.com/user-attachments/assets/69e0fae6-b777-4653-89ff-1b8c0d433c17)
 
 Step9：批次刪除前的清單：顯示已勾選多筆任務，準備執行批次刪除的畫面。
-![step9_batch_delete_before](https://github.com/user-attachments/assets/3c97d350-7162-4a17-8c98-c52fe70dfad6)
+![step9_batch_delete_before](https://github.com/user-attachments/assets/04295bba-5dfc-408f-b9ac-289f2db5b7f6)
 
 Step9：批次刪除後的清單：刪除成功後僅剩未勾選的任務，清單同步更新。
-![step9_batch_delete_after](https://github.com/user-attachments/assets/ed90cbe2-ad65-46b0-9665-2dd848c2a436)
+![step9_batch_delete_after](https://github.com/user-attachments/assets/e5544751-0c5e-4c0f-a003-d765dcfa355f)
 
 Step10：API 建立任務成功的 JSON 回應：透過 requests.post 發送 API，成功回傳 status=201 與 {"message": "成功新增待辦", "id": 78}。
 ```
@@ -147,19 +149,44 @@ Step10：API 建立任務成功的 JSON 回應：透過 requests.post 發送 API
 
 ## 🤖 GitHub Actions 自動化流程
 
-CI 透過 `.github/workflows/test.yml` 自動執行下列流程：
+CI透過 .github/workflows/test.yml 自動執行以下完整流程：
 
-1. 啟動 MSSQL 服務（Docker）
-2. 安裝 Python 套件與初始化資料庫
-3. 啟動 Flask 應用（背景執行）
-4. 執行 pytest 測試，產出 `report.html` 與 `allure-results`
-5. 將報告上傳為 GitHub Actions artifact（可下載）
+1. **啟動 MSSQL 服務（Docker）**  
+   - 使用官方 MSSQL 容器，設置台灣地區字元排序與連接帳密  
+   - 監控服務啟動狀態，確保資料庫準備就緒後再繼續執行後續步驟
+
+2. **安裝 Python 環境與專案依賴套件**  
+   - 安裝 Python 3.11 與 `requirements.txt` 中所列套件  
+   - 額外安裝 ODBC 驅動與 `sqlcmd` 工具，以支援 MSSQL 操作
+
+3. **啟動 Flask 應用（背景執行）**  
+   - 使用 `nohup` 啟動 Flask 應用，並將 log 儲存於 `flask.log`  
+   - 確保應用可提供 UI 測試存取
+
+4. **初始化資料庫與預設測試資料**  
+   - 執行 `init_database.py` 建立資料表  
+   - 執行 `init_data.py` 新增預設測試帳號等初始資料
+
+5. **建立存放測試案例截圖資料夾**  
+   - 建立資料夾存放測試案例的截圖
+
+6. **執行測試並產出報告**  
+   - 使用 `pytest` 執行 Selenium + requests 的自動化測試  
+   - 同時產出：
+     - `report.html`（HTML 測試報告）
+     - `allure-results/`（Allure 測試資料）
+
+7. **上傳測試成果與資源（Artifacts）**  
+   - 上傳測試報告與測試截圖（如有）至 GitHub Actions  
+   - 所有測試結果可供下載與後續分析
+
+8. **失敗時輸出 Flask 應用 log（輔助除錯）**  
+   - 若測試失敗，自動顯示 `flask.log` 最後內容以供分析
 
 ---
 
 ## 🏁 後續可擴充項目
 
-- [ ] Docker 化整合 MSSQL + Flask + 測試一鍵啟動
 - [ ] Playwright 改寫 Selenium 測試
 
 ---
@@ -169,6 +196,10 @@ CI 透過 `.github/workflows/test.yml` 自動執行下列流程：
 若對本專案架構或自動化測試流程有興趣，歡迎技術交流或履歷詢問。
 
 ## 📎  其餘附件
-[完整測試作品集說明（Word 版）下載] [todo_test_portfolio.docx](https://github.com/user-attachments/files/20637909/todo_test_portfolio.docx)
+[完整測試作品集說明（Word 版）下載] 
+[todo_test_portfolio.docx](https://github.com/user-attachments/files/20653901/todo_test_portfolio.docx)
+
+
+
 
 
