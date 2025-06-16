@@ -31,9 +31,3 @@ class RegisterPage(BasePage):
             return True
         except:
             return False
-
-    def get_error_messages(self):
-        return [e.text for e in self.driver.find_elements(By.CSS_SELECTOR, "p.error")]
-
-    def has_error_message(self, text):
-        return text in self.get_error_messages()

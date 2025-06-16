@@ -1,12 +1,16 @@
 import pytest
 from pages.register_page import RegisterPage
+from pages.login_page import LoginPage
 from utils import get_user_by_account
 
 pytestmark = pytest.mark.order(1)
 @pytest.mark.register
 def test_register_success(driver, app_context):
+    login = LoginPage(driver)
+    login.open()
+    login.go_to_register()
+
     register = RegisterPage(driver)
-    register.open()
     register.register("user_new", "U$erN3w!Qz7^", "新用戶", "user_new@gmail.com")
     # UI 驗證：是否跳轉成功
     assert register.is_success()
@@ -19,38 +23,22 @@ def test_register_success(driver, app_context):
     assert user.email == "user_new@gmail.com"
 
 @pytest.mark.register
-def test_register_empty_account(driver):
+@pytest.mark.parametrize("account,password,username,email,expected_error", [
+    ("", "U$erN3w!Qz7^", "用戶A", "a@gmail.com", "帳號為必填"),
+    ("userA", "", "用戶A", "a@gmail.com", "密碼為必填"),
+    ("userB", "U$erN3w!Qz7^", "用戶B", "not-an-email", "Email 格式錯誤"),
+    ("user_new", "U$erN3w!Qz7^", "新用戶", "user_new@gmail.com", "帳號已存在"),
+])
+def test_register_failed_cases(driver, account, password, username, email, expected_error):
+    login = LoginPage(driver)
+    login.open()
+    login.go_to_register()
+
     register = RegisterPage(driver)
-    register.open()
-    register.register("", "U$erN3w!Qz7^", "用戶A", "a@gmail.com")
+    register.register(account, password, username, email)
+
     assert not register.is_success()
-    assert register.has_error_message("帳號為必填")
+    assert register.has_error_message(expected_error)
 
-
-@pytest.mark.register
-def test_register_empty_password(driver):
-    register = RegisterPage(driver)
-    register.open()
-    register.register("userA", "", "用戶A", "a@gmail.com")
-    assert not register.is_success()
-    assert register.has_error_message("密碼為必填")
-
-
-@pytest.mark.register
-def test_register_invalid_email(driver):
-    register = RegisterPage(driver)
-    register.open()
-    register.register("userB", "U$erN3w!Qz7^", "用戶B", "not-an-email")
-    assert not register.is_success()
-    assert register.has_error_message("Email 格式錯誤")
-
-
-@pytest.mark.register
-def test_register_duplicate_account(driver):
-    register = RegisterPage(driver)
-    register.open()
-    # 帳號 user 已存在
-    register.register("user_new", "U$erN3w!Qz7^", "新用戶", "user_new@gmail.com")
-    driver.save_screenshot("screenshots/step4_register_duplicate.png")
-    assert not register.is_success()
-    assert register.has_error_message("帳號已存在")
+    if expected_error == "帳號已存在":
+        driver.save_screenshot("screenshots/step4_register_duplicate.png")

@@ -152,21 +152,68 @@ def test_delete_todo_success(auth_token, app_context):
     assert db.session.get(Todo, todo_id) is None
 
 @pytest.mark.api
-def test_delete_todo_fail_not_found(auth_token):
-    res = requests.delete(f"{BASE_URL}/api/todo/999999", headers={"Authorization": f"Bearer {auth_token}"})
+@pytest.mark.parametrize("method,url_suffix", [
+    ("put", "api/todo/999999"),
+    ("delete", "api/todo/999999")
+])
+def test_todo_not_found(auth_token, method, url_suffix):
+    url = f"{BASE_URL}/{url_suffix}"
+    request_func = getattr(requests, method)
+    res = request_func(url, headers={"Authorization": f"Bearer {auth_token}"})
     assert res.status_code == 404
 
 @pytest.mark.api
-def test_create_todo_validation_error(auth_token):
-    start = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
-    end = (date.today() + timedelta(days=2)).strftime("%Y-%m-%d")
-    res = requests.post(f"{BASE_URL}/api/todo", headers={"Authorization": f"Bearer {auth_token}"}, json={
-        # 缺 title
-        "description": "測試欄位驗證",
+@pytest.mark.parametrize("invalid_field,payload,expected_error", [
+    ("title", {
+        "description": "缺標題",
         "priority": "高",
-        "start_date": start,
-        "end_date": end,
+        "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),
         "repeat": "每天"
-    })
+    }, "標題為必填"),
+
+    ("description", {
+        "title": "缺說明",
+        "priority": "高",
+        "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),
+        "repeat": "每天"
+    }, "說明為必填"),
+
+    ("priority", {
+        "title": "缺優先",
+        "description": "優先為空",
+        "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),
+        "repeat": "每天"
+    }, "優先順序為必填"),
+
+    ("start_date", {
+        "title": "缺開始日期",
+        "description": "缺開始日期",
+        "priority": "高",
+        "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),
+        "repeat": "每天"
+    }, "請填寫開始日期"),
+
+    ("end_date", {
+        "title": "缺結束日期",
+        "description": "缺結束日期",
+        "priority": "高",
+        "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "repeat": "每天"
+    }, "請填寫結束日期"),
+
+    ("repeat", {
+        "title": "缺重複頻率",
+        "description": "缺重複頻率",
+        "priority": "高",
+        "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+        "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),
+    }, "請選擇重複設定"),
+
+])
+def test_create_todo_validation_errors(auth_token, invalid_field, payload, expected_error):
+    res = requests.post(f"{BASE_URL}/api/todo", headers={"Authorization": f"Bearer {auth_token}"}, json=payload)
     assert res.status_code == 400
-    assert "標題為必填" in str(res.json()["errors"])
+    assert expected_error in str(res.json()["errors"])

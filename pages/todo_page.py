@@ -1,8 +1,6 @@
 from selenium.webdriver.common.by import By
 from .base_page import BasePage
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
 
 class TodoPage(BasePage):
     BTN_CREATE = (By.CSS_SELECTOR, "button.btn-green[onclick*='/todo/create']")

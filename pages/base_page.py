@@ -1,9 +1,8 @@
-
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
 
 class BasePage:
     """
@@ -59,3 +58,14 @@ class BasePage:
         """使用 JavaScript 設定 input 元件的值（穩定、不觸發 UI 問題）"""
         element = self.find(*locator)
         self.driver.execute_script("arguments[0].value = arguments[1]", element, value)
+
+    # 取得所有錯誤訊息文字
+    def get_error_messages(self):
+        return [e.text for e in self.driver.find_elements(By.CSS_SELECTOR, "p.error")]
+    # texts = []
+    # for e in self.driver.find_elements(By.CSS_SELECTOR, "p.error"):
+    #   texts.append(e.text)
+    # return texts
+
+    def has_error_message(self, text):
+        return text in self.get_error_messages()

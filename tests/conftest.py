@@ -17,6 +17,9 @@ def driver():
     # 使用唯一乾淨 user profile 資料夾（避免 session 衝突）
     user_data_dir = tempfile.mkdtemp(prefix=f"profile-{uuid.uuid4()}-")
     options.add_argument(f"--user-data-dir={user_data_dir}")
+    # 隱藏自動化控制提示與防止干擾
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-popup-blocking")
 
     # 停用密碼提示與下載彈窗
     options.add_experimental_option("prefs", {
@@ -28,6 +31,7 @@ def driver():
     # 禁用「安全性提示」功能
     options.add_argument("--disable-features=PasswordCheck")
     options.add_argument("--disable-features=AutofillServerCommunication")
+
     # 降低干擾，例如某些網站會攔截自動化行為（防bot）
     options.add_argument("--disable-blink-features=AutomationControlled")
 
@@ -36,12 +40,6 @@ def driver():
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-
-    # 關閉其他干擾彈窗與提示
-    options.add_argument("--disable-notifications")
-    options.add_argument("--disable-save-password-bubble")
-    options.add_argument("--disable-infobars")
-    options.add_argument("--disable-popup-blocking")
 
     driver = webdriver.Chrome(options=options)
     yield driver

@@ -35,14 +35,10 @@ class LoginPage(BasePage):
             WebDriverWait(self.driver, timeout).until(
                 lambda d: page in d.current_url
             )
+            # 等同於
+            # def fun(d):
+            #   return page in d.current_url
             return True
         except:
             print(f"[!] 頁面未轉跳至 {page}，目前位於 {self.driver.current_url}")
             return False
-
-    # 取得所有錯誤訊息文字
-    def get_error_messages(self):
-        return [e.text for e in self.driver.find_elements(By.CSS_SELECTOR, "p.error")]
-
-    def has_error_message(self, text):
-        return text in self.get_error_messages()

@@ -201,7 +201,6 @@ def test_create_edit_delete_todo_with_title_check(driver):
         note="初始備註"
     )
     assert title in todo.get_all_titles()
-
     # 編輯
     edited_title = "自動化任務 A 已編輯"
     todo.click_edit_first()
@@ -317,7 +316,11 @@ def test_todo_crud_customized_with_title_check(driver, account, password, create
     login.click_logout_button()
 
 @pytest.mark.todo
-def test_create_todo_missing_required_fields(driver):
+@pytest.mark.parametrize("title, start_date, note, case_name", [
+    ("", (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"), "備註A", "缺標題"),
+    ("標題B", "06-02-2025", "備註B", "錯誤日期格式"),
+])
+def test_create_todo_invalid_inputs(driver, title, start_date, note, case_name):
     login = LoginPage(driver)
     login.open()
     login.login("test", "P@ssw0rd_X9g2#")
@@ -325,39 +328,19 @@ def test_create_todo_missing_required_fields(driver):
     todo = TodoPage(driver)
     todo.click_create()
 
-    # 留空標題
+    end_date = (datetime.today() + timedelta(days=2)).strftime("%Y-%m-%d")
+
     todo.fill_form_and_submit(
-        title="",
-        description="描述A",
+        title=title,
+        description="描述",
         priority="高",
-        start_date="2025-06-02",
-        end_date="2025-06-03",
+        start_date=start_date,
+        end_date=end_date,
         repeat="每天",
-        note="備註A"
+        note=note
     )
-    assert "todo/list" not in driver.current_url
-    login.click_logout_button()
 
-@pytest.mark.todo
-def test_create_todo_invalid_date_format(driver):
-    login = LoginPage(driver)
-    login.open()
-    login.login("test", "P@ssw0rd_X9g2#")
-
-    todo = TodoPage(driver)
-    todo.click_create()
-
-    # 錯誤的日期格式（或空值）
-    todo.fill_form_and_submit(
-        title="標題B",
-        description="描述B",
-        priority="中",
-        start_date="06-02-2025",  # 用 "06-02-2025"
-        end_date="2025-06-03",
-        repeat="每天",
-        note="備註B"
-    )
-    assert "todo/list" not in driver.current_url
+    assert "todo/list" not in driver.current_url, f"{case_name} 驗證失敗"
     login.click_logout_button()
 
 @pytest.mark.todo
