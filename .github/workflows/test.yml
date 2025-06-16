@@ -21,19 +21,17 @@ jobs:
           - 1433:1433
 
     steps:
+    # Checkout 程式碼
     - name: Checkout source
       uses: actions/checkout@v3
 
+    # 安裝 Python 3.11
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
+    # 安裝 ODBC 驅動與 MSSQL 工具，安裝必要的驅動與命令列工具，才能使用 sqlcmd 或 pyodbc 連 MSSQL
     - name: Install ODBC Driver and MSSQL Tools
       run: |
         curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
@@ -43,11 +41,19 @@ jobs:
         echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
         source ~/.bashrc
 
+    # 安裝套件（含 pyodbc）
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # 設定 CI 用環境變數，config.py 會透過 os.environ.get(...) 自動讀取這些變數
     - name: Set environment variables for CI
       run: |
         echo "DB_USER=tester" >> $GITHUB_ENV
         echo "DB_PASSWORD=Qwer1234!" >> $GITHUB_ENV
 
+    # 等待 MSSQL 完全啟動
     - name: Wait for MSSQL to be ready
       run: |
         export PATH="$PATH:/opt/mssql-tools/bin"
@@ -57,6 +63,7 @@ jobs:
           sleep 5
         done
 
+    # 背景啟動 Flask 應用
     - name: Start Flask app in background
       env:
         FLASK_APP: app.py
@@ -65,20 +72,25 @@ jobs:
         nohup flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
         sleep 5
         tail -n 20 flask.log
-
+    
+    # 初始化資料庫結構與帳號
     - name: Initialize database
       run: python init_database.py
 
+    # 建立資料表與測試帳號（用 SQLAlchemy）
     - name: Create DB tables and test user
       run: python init_data.py
 
+    # 建立 screenshots 資料夾
     - name: Prepare screenshots folder
       run: mkdir -p screenshots
 
+    # 執行測試（Selenium + pytest、requests + pytest）
     - name: Run pytest
       run: |
         pytest --html=report.html --self-contained-html --alluredir=allure-results
 
+    # 產生 Allure HTML 報告
     - name: Generate Allure HTML report
       if: always()
       run: |
@@ -87,6 +99,7 @@ jobs:
         tar -xvzf allure-2.27.0.tgz
         ./allure-2.27.0/bin/allure generate allure-results -o allure-report --clean
 
+    # 發佈 Allure 報告到 GitHub Pages
     - name: Deploy Allure report to GitHub Pages
       if: always()
       uses: peaceiris/actions-gh-pages@v3
@@ -94,18 +107,21 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./allure-report
 
+    # 上傳報告
     - name: Upload HTML report (artifact)
       uses: actions/upload-artifact@v4
       with:
         name: pytest-report
         path: report.html
 
+    # 上傳結果
     - name: Upload Allure results
       uses: actions/upload-artifact@v4
       with:
         name: allure-results
         path: allure-results
 
+    # 上傳截圖
     - name: Upload screenshots (if any)
       if: always()
       uses: actions/upload-artifact@v4
@@ -113,6 +129,7 @@ jobs:
         name: screenshots
         path: screenshots/
 
+    #如果失敗則輸出 flask.log
     - name: Output logs if failed
       if: failure()
       run: cat flask.log || echo "No log file"
