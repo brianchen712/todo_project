@@ -59,11 +59,11 @@ python init_data.py
 python app.py
 ```
 
-預設啟動網址為：`http://127.0.0.1:5000`
+啟動後可透過瀏覽器開啟：`http://127.0.0.1:5000`
 
 ---
 
-## 🧪 測試執行方式
+## 🧪 測試執行方式(本機)
 
 ```bash
 # 執行所有測試並產出 HTML + Allure 報告
@@ -78,6 +78,48 @@ pytest -m api
 
 - `report.html`：HTML 測試報告，可直接用瀏覽器打開
 - `allure-results/`：Allure 報告原始資料，可使用 `allure serve` 觀看
+
+---
+
+## 🤖 GitHub Actions 自動化流程
+
+CI透過 .github/workflows/test.yml 自動執行以下完整流程：
+
+1. **啟動 MSSQL 服務（Docker）**  
+   - 使用官方 MSSQL 容器，設置台灣地區字元排序與連接帳密  
+   - 監控服務啟動狀態，確保資料庫準備就緒後再繼續執行後續步驟
+
+2. **安裝 Python 環境與專案依賴套件**  
+   - 安裝 Python 3.11 與 `requirements.txt` 中所列套件  
+   - 額外安裝 ODBC 驅動與 `sqlcmd` 工具，以支援 MSSQL 操作
+
+3. **啟動 Flask 應用（背景執行）**  
+   - 使用 `nohup` 啟動 Flask 應用，並將 log 儲存於 `flask.log`  
+   - 確保應用可提供 UI 測試存取
+
+4. **初始化資料庫與預設測試資料**  
+   - 執行 `init_database.py` 建立資料表  
+   - 執行 `init_data.py` 新增預設測試帳號等初始資料
+
+5. **建立存放測試案例截圖資料夾**  
+   - 建立資料夾存放測試案例的截圖
+
+6. **執行測試並產出報告**  
+   - 使用 `pytest` 執行 Selenium + requests 的自動化測試  
+   - 同時產出：
+     - `report.html`（HTML 測試報告）
+     - `allure-results/`（Allure 測試資料）
+
+7. **Allure HTML 產生與部署 Pages**
+   - 下載 CLI → 轉換 → 使用 peaceiris/actions-gh-pages 發布
+   - [📊 查看 Allure 測試報告（GitHub Pages）](https://brianchen712.github.io/todo_project/)
+
+8. **上傳測試成果與資源（Artifacts）**  
+   - 上傳測試報告與測試截圖（如有）至 GitHub Actions  
+   - 所有測試結果可供下載與後續分析
+
+9. **失敗時輸出 Flask 應用 log（輔助除錯）**  
+   - 若測試失敗，自動顯示 `flask.log` 最後內容以供分析 
 
 ---
 
@@ -146,43 +188,6 @@ Step10：API 建立任務成功的 JSON 回應：透過 requests.post 發送 API
   "message": "成功新增待辦"
 }
 ```
-
-## 🤖 GitHub Actions 自動化流程
-
-CI透過 .github/workflows/test.yml 自動執行以下完整流程：
-
-1. **啟動 MSSQL 服務（Docker）**  
-   - 使用官方 MSSQL 容器，設置台灣地區字元排序與連接帳密  
-   - 監控服務啟動狀態，確保資料庫準備就緒後再繼續執行後續步驟
-
-2. **安裝 Python 環境與專案依賴套件**  
-   - 安裝 Python 3.11 與 `requirements.txt` 中所列套件  
-   - 額外安裝 ODBC 驅動與 `sqlcmd` 工具，以支援 MSSQL 操作
-
-3. **啟動 Flask 應用（背景執行）**  
-   - 使用 `nohup` 啟動 Flask 應用，並將 log 儲存於 `flask.log`  
-   - 確保應用可提供 UI 測試存取
-
-4. **初始化資料庫與預設測試資料**  
-   - 執行 `init_database.py` 建立資料表  
-   - 執行 `init_data.py` 新增預設測試帳號等初始資料
-
-5. **建立存放測試案例截圖資料夾**  
-   - 建立資料夾存放測試案例的截圖
-
-6. **執行測試並產出報告**  
-   - 使用 `pytest` 執行 Selenium + requests 的自動化測試  
-   - 同時產出：
-     - `report.html`（HTML 測試報告）
-     - `allure-results/`（Allure 測試資料）
-
-7. **上傳測試成果與資源（Artifacts）**  
-   - 上傳測試報告與測試截圖（如有）至 GitHub Actions  
-   - 所有測試結果可供下載與後續分析
-
-8. **失敗時輸出 Flask 應用 log（輔助除錯）**  
-   - 若測試失敗，自動顯示 `flask.log` 最後內容以供分析
-
 ---
 
 ## 🏁 後續可擴充項目
@@ -195,9 +200,12 @@ CI透過 .github/workflows/test.yml 自動執行以下完整流程：
 
 若對本專案架構或自動化測試流程有興趣，歡迎技術交流或履歷詢問。
 
+---
+
 ## 📎  其餘附件
-[完整測試作品集說明（Word 版）下載] 
-[todo_test_portfolio.docx](https://github.com/user-attachments/files/20653901/todo_test_portfolio.docx)
+[完整測試作品集說明（Word 版）下載] [todo_test_portfolio.docx](https://github.com/user-attachments/files/20654628/todo_test_portfolio.docx)
+
+
 
 
 
