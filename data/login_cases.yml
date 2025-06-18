@@ -9,25 +9,30 @@
   account: wrong
   password: wrong
   success: false
-  expected_error: "帳號或密碼錯誤"
+  expected_error:
+    - "帳號或密碼錯誤"
 
 - id: TC003
   title: 空帳號
   account:
   password: 'P@ssw0rd_X9g2#'
   success: false
-  expected_error: "帳號為必填"
+  expected_error:
+    - "帳號為必填"
 
 - id: TC004
   title: 空密碼
   account: test
   password: ''
   success: false
-  expected_error: "密碼為必填"
+  expected_error:
+    - "密碼為必填"
 
 - id: TC005
   title: 帳密皆空
   account:
   password: ''
   success: false
-  expected_error: "帳號為必填"
+  expected_error:
+    - "帳號為必填"
+    - "密碼為必填"
