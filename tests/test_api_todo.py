@@ -118,20 +118,6 @@ def test_update_todo_success(auth_token, app_context):
     assert updated.priority == "高"
 
 @pytest.mark.api
-def test_update_todo_fail_not_found(auth_token):
-    start = (date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
-    end = (date.today() + timedelta(days=4)).strftime("%Y-%m-%d")
-    res = requests.put(f"{BASE_URL}/api/todo/999999", headers={"Authorization": f"Bearer {auth_token}"}, json={
-        "title": "不存在",
-        "description": "不存在",
-        "priority": "高",
-        "start_date": start,
-        "end_date": end,
-        "repeat": "每周"
-    })
-    assert res.status_code == 404
-
-@pytest.mark.api
 def test_delete_todo_success(auth_token, app_context):
     start = (date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
     end = (date.today() + timedelta(days=4)).strftime("%Y-%m-%d")
@@ -205,8 +191,8 @@ def test_todo_not_found(auth_token, method, url_suffix):
     }, "請填寫結束日期"),
 
     ("repeat", {
-        "title": "缺重複頻率",
-        "description": "缺重複頻率",
+        "title": "缺重複設定",
+        "description": "缺重複設定",
         "priority": "高",
         "start_date": (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
         "end_date": (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),

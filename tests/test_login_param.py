@@ -24,4 +24,6 @@ def test_login_param(driver, case, app_context):
     else:
         assert not login.is_success("/todo/list")
         if "expected_error" in case:
-            assert login.has_error_message(case["expected_error"])
+            errors = case["expected_error"]
+            for msg in errors:
+                assert login.has_error_message(msg)

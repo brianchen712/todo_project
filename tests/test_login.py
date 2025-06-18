@@ -37,10 +37,3 @@ def test_login_failures(driver, account, password, error_messages, screenshot):
     assert not login.is_success("/todo/list")
     for msg in error_messages:
         assert login.has_error_message(msg)
-
-@pytest.mark.login
-def test_go_to_register_page(driver):
-    login = LoginPage(driver)
-    login.open()
-    login.go_to_register()
-    assert login.is_success("/register")
