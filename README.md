@@ -1,6 +1,6 @@
-# 📋 自動化測試專案 - 提醒事項系統
+# 📋 自動化測試作品 - 提醒事項系統
 
-本專案是一個使用 Flask + MSSQL 實作的提醒事項系統，支援會員註冊/登入、提醒事項 CRUD、附件上傳與狀態切換。
+本作品是一個使用 Flask + MSSQL 實作的提醒事項系統，支援會員註冊/登入、提醒事項 CRUD、附件上傳與狀態切換。
 搭配 Selenium 與 requests 實作 UI 及 API 層級的自動化測試，並整合 GitHub Actions 執行 CI、自動產出 HTML 與 Allure 測試報告。
 
 已完成[測試計畫書.docx](https://github.com/user-attachments/files/20788802/default.docx)及[測試案例總表.xlsx](https://github.com/user-attachments/files/20788852/default.xlsx)
